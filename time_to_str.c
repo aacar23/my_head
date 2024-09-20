@@ -1,4 +1,4 @@
-//Since asctime got deprecated with C23 this year I needed to create my own version of the function.
+//Since asctime got deprecated with C23 this year I needed to create my own version of the function that converts current time to a string instead.
 
 #include <time.h>
 

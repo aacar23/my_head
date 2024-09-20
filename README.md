@@ -17,7 +17,7 @@ These command line options must be used without any argument:
 
 -v / --verbose : Print header of the file no matter what.
 
--q / --quiet : Don't print header for any of the files.
+-q / --quiet / --silent : Don't print header for any of the files.
 
 -z / --zero-terminated : Handle null character as new line and vice versa.
 

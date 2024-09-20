@@ -5,6 +5,9 @@
 #include "error_exit.h"
 #include "time_to_str.h"
 
+
+int terminating_character = '\n';
+
 static void print_head_template(const char *file_name){
     printf("==> %s <==\n", file_name);
 }
@@ -24,23 +27,23 @@ static long get_end_of_file(FILE *file_handle)
     return end_point;
 }
 
-void my_head_byte_runner(FILE *file_handle, ssize_t count, int terminating_character)
+void my_head_byte_runner(FILE *file_handle, ssize_t count)
 {
     for (int c;((c = fgetc(file_handle)) != EOF) && count > 0;--count)
-        printf("%c", c == terminating_character ? '\n' : c == '\n' ? '\0' : c);
+        printf("%c", c);
 }
 
 
-void my_head_line_runner(FILE *file_handle, ssize_t count, int terminating_character)
+void my_head_line_runner(FILE *file_handle, ssize_t count)
 {
     for (int c;((c = fgetc(file_handle)) != EOF) && count > 0;count -= c == terminating_character)
-        printf("%c", c == terminating_character ? '\n' : c == '\n' ? '\0' : c);
+        printf("%c", c);
 
     if (ferror(file_handle))
         error_exit("%s:%s:%s:%s", __func__, "fgetc", strerror(errno), time_to_str());
 }
 
-void my_head(const char *file_name, ssize_t count, int print_head, int is_zero_terminated, void (*runner)(FILE *file_handle, ssize_t count, int terminating_character))
+void my_head(const char *file_name, ssize_t count, int print_head, void (*runner)(FILE *file_handle, ssize_t count))
 {
     const char *faulty_call = NULL;
 
@@ -54,7 +57,7 @@ void my_head(const char *file_name, ssize_t count, int print_head, int is_zero_t
         print_head_template(file_name);
 
     if (count >= 0){
-        (*runner)(file_handle, count, !is_zero_terminated ? '\n' : '\0');
+        (*runner)(file_handle, count);
         return;
     }
 
@@ -74,7 +77,7 @@ void my_head(const char *file_name, ssize_t count, int print_head, int is_zero_t
         goto FAIL_2;
     }
 
-    (*runner)(file_handle, end_point - 1, !is_zero_terminated ? '\n' : '\0');
+    (*runner)(file_handle, end_point - 1);
 
     FAIL_2:
     fclose(file_handle);
