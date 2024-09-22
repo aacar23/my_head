@@ -83,8 +83,10 @@ void my_head(const char *file_name, ssize_t count, int print_head, void (*runner
     fclose(file_handle);
     FAIL_1:
     if (faulty_call){
-        if (errno = EBADF)
-            error_exit("File: %s does not exist\n", file_name);
+        if (errno == ENOENT){
+            printf("my_head: cannot open \'%s\' for reading: %s\n", file_name, strerror(errno));
+            return;
+        }
         error_exit("%s:%s:%s:%s", __func__, faulty_call, strerror(errno), time_to_str());
     }
 }
